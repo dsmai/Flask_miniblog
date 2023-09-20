@@ -1,0 +1,1 @@
+# Simpleminiblog application using Flask backend and SQLite database
