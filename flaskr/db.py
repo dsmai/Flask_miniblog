@@ -28,3 +28,31 @@ def close_db(e=None):
 
     if db is not None:
         db.close()
+
+
+def init_db():
+    # get_db() returns a database connection, which is used
+    # to execute the commands read from the file
+    db = get_db()
+
+    with current_app.open_resource("schema.sql") as f:
+        db.executescript(f.read().decode("utf8"))
+
+
+# this decorator here is to link to a command line command
+# CL command "init-db" will calll init_db() function
+# and show success message to the user.
+@click.command("init-db")
+def init_db_command():
+    """Clear the existing data and create new tables."""
+    init_db()
+    click.echo("Initialized the database.")
+
+
+# register with the Application
+# close_db() and init_db_command() need to be registered
+# with the application instance.
+# write a function that takes an application and does the registration
+def init_app(app):
+    app.teardown_appcontext(close_db)
+    app.cli.add_command(init_db_command)
