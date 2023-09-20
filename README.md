@@ -1,1 +1,1 @@
-# Simpleminiblog application using Flask backend and SQLite database
+# Simple miniblog application using Flask backend and SQLite database
