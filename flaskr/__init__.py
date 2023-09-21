@@ -25,6 +25,13 @@ def create_app(test_config=None):
         pass
 
     # a simple page that says hello, there is a decorator here
+    # this means the view function hello() will be called
+    # once a request is made to the "/hello" URL.
+    # The route decorator @app.route("/hello")
+    # associates the "/hello" URL with the hello() function.
+    # In short, route decorator in Flask associates URl routes
+    # with view functions, defining the behavior of web app
+    # based on the requested URL.
     @app.route("/hello")
     def hello():
         return "Hello, World!"
@@ -32,5 +39,9 @@ def create_app(test_config=None):
     from . import db
 
     db.init_app(app)
+
+    from . import auth
+
+    app.register_blueprint(auth.pb)
 
     return app
