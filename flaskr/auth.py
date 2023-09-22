@@ -62,6 +62,7 @@ def login():
             error = "Incorrect password."
 
         if error is None:
+            # session is like a dict that store datas accross requests for same user
             session.clear()
             session["user_id"] = user["id"]
             return redirect(url_for("index"))
@@ -69,3 +70,24 @@ def login():
         flash(error)
 
     return render_template("auth/login.html")
+
+
+# This view functions implements logout
+@bp.route("/logout")
+def logout():
+    # to log out, need to clear user_id from the session
+    session.clear()
+    return redirect(url_for("index"))
+
+
+# This function is a decorator that should wrap other view functions
+# Because if the same person log in again, cookies should be loaded back
+# for that
+@bp.before_app_request
+def load_logged_in_user():
+    user_id = session.get("user_id")
+
+    if user_id is None:
+        g.user = None
+    else:
+        g.user = get_db().execute("SELECT * FROM user WHERE id = ?", user_id).fetchone()
