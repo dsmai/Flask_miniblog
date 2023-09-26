@@ -5,6 +5,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from flaskr.db import get_db
 
+# This is a blueprint
+
 # The url_prefix will be prepended to all the URLs associated with the blueprint.
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -82,7 +84,8 @@ def logout():
 
 # This function is a decorator that should wrap other view functions
 # Because if the same person log in again, cookies should be loaded back
-# for that
+# for that.
+# bp.before_app_request() links/register a function that runs before other view
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get("user_id")
@@ -91,3 +94,20 @@ def load_logged_in_user():
         g.user = None
     else:
         g.user = get_db().execute("SELECT * FROM user WHERE id = ?", user_id).fetchone()
+
+
+# This decorator is used to require user to log in first before creating,
+# editting or deleting blog posts.
+# Note that we use @functools.wraps() here to keep the same
+# metadata of the original function preserved.
+# Later on, we will use this decorator to decorate other views
+# such as create, edit, delete blog posts.
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for("auth.login"))
+
+        return view(**kwargs)
+
+    return wrapped_view
