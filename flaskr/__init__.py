@@ -42,6 +42,20 @@ def create_app(test_config=None):
 
     from . import auth
 
+    # this is to register the blueprint with the main Flask application
     app.register_blueprint(auth.bp)
+
+    from . import blog
+
+    # this is to register the blueprint with the main Flask application
+    app.register_blueprint(blog.bp)
+    app.add_url_rule("/", endpoint="index")  # this means that the root "/" is also at "index", equivalent
+    # it maps the root URL "/" to any endpoint named "index"
+    # the actual reason why I need to do the above is, with url_for(),
+    # I have to pass in a param which is the view function. From that
+    # it will create a URL whose endpoint is the view function name. If
+    # let's say my view function name is index(), then the URL endpoint will be like "/index".
+    # so to link that with "/" (basically saying they refer to same thing),
+    # I need to use add_rule_url()
 
     return app
