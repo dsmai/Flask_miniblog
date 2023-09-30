@@ -33,6 +33,8 @@ def close_db(e=None):
 def init_db():
     # get_db() returns a database connection, which is used
     # to execute the commands read from the file
+    # The application establishes a connection to the SQLite database file.
+    # This connection is typically created by calling functions or methods provided by the SQLite library.
     db = get_db()
 
     with current_app.open_resource("schema.sql") as f:
